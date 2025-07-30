@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 export default function AccountPage() {
   const { user, logout, loading, setUser } = useAuth();
   const [bio, setBio] = useState(user?.bio || '');
-  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword2, setNewPassword2] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [updating, setUpdating] = useState(false);
   const [message, setMessage] = useState(null);
@@ -53,8 +53,8 @@ export default function AccountPage() {
         credentials: 'include',
         body: JSON.stringify({
           id: user.id,
-          currentPassword,
           newPassword,
+          newPassword2,
         }),
       });
 
@@ -62,8 +62,8 @@ export default function AccountPage() {
       if (!res.ok) throw new Error(data.error || 'Failed to change password');
 
       setMessage(data.message || 'Password changed');
-      setCurrentPassword('');
       setNewPassword('');
+      setNewPassword2('');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -130,20 +130,20 @@ export default function AccountPage() {
       <form onSubmit={handlePasswordUpdate} style={{ marginTop: '2rem' }}>
         <h3>Change Password</h3>
         <label>
-          Current Password:
-          <input
-            type="password"
-            value={currentPassword}
-            onChange={e => setCurrentPassword(e.target.value)}
-            style={inputStyle}
-          />
-        </label>
-        <label>
           New Password:
           <input
             type="password"
             value={newPassword}
             onChange={e => setNewPassword(e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          Confirm New Password:
+          <input
+            type="password"
+            value={newPassword2}
+            onChange={e => setNewPassword2(e.target.value)}
             style={inputStyle}
           />
         </label>

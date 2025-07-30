@@ -9,7 +9,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/v1/products.php')
+    fetch('http://127.0.0.1:8000/api/v1/products_top.php')
     .then(res => {
       if (!res.ok) throw new Error('Error en la respuesta del servidor');
       return res.json();

@@ -1,15 +1,18 @@
 <?php
-header('Access-Control-Allow-Origin: http://localhost:3000');
+header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
 header('Access-Control-Allow-Credentials: true');
 
 require '../../../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
+$dotenv->load();
+$secretKey = getenv('JWT');
 
 header('Content-Type: application/json');
 include '../../../db.php';
-
-$secretKey = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -19,12 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $inputJSON = file_get_contents('php://input');
 $data = json_decode($inputJSON, true);
-
-if (!$data) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Invalid JSON']);
-    exit;
-}
 
 if (empty($data['username']) || empty($data['password'])) {
     http_response_code(422);
@@ -63,7 +60,7 @@ try {
     setcookie('token', $jwt, [
         'expires' => $expire,
         'path' => '/',
-        'domain' => 'localhost',
+        'domain' => '127.0.0.1',
         'secure' => true,
         'httponly' => true,
         'samesite' => 'Lax',

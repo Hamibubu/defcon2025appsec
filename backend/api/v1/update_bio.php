@@ -1,17 +1,20 @@
 <?php
-require '../../../../vendor/autoload.php';
+require '../../../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key; 
+use Dotenv\Dotenv;
 
-$secretKey = '';
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
+$dotenv->load();
+$secretKey = getenv('JWT');
 
-header('Access-Control-Allow-Origin: http://localhost:3000');
+header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-include '../../../../db.php';
+include '../../../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -31,58 +34,52 @@ if (!isset($_COOKIE['token'])) {
     exit;
 }
 
+$inputJSON = file_get_contents('php://input');
+$data = json_decode($inputJSON, true);
+
+if (!$data) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid JSON']);
+    exit;
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $jwt = $_COOKIE['token'];
 
     try {
         $decoded = JWT::decode($jwt, new Key($secretKey, 'HS512'));
-        $id = $_POST['id'];
-        
-        if (!empty($_POST['username'])) {
-            $username = $_POST['username'];
-        } else {
+        $id = $data['id'] ?? null;
+
+        $allowedFields = ['username', 'role', 'bio', 'verified'];
+
+        $fieldsToUpdate = array_intersect_key($data, array_flip($allowedFields));
+
+        if (empty($fieldsToUpdate)) {
             http_response_code(400);
-            echo json_encode(["error" => "Invalid username"]);
+            echo json_encode(["error" => "No valid fields to update"]);
             exit;
         }
-        $role = $_POST['role'] ?? 'user';
-        $bio = $_POST['bio'] ?? '';
-        $verified = $_POST['verified'] ?? 0;
+
+        $setClause = implode(', ', array_map(fn($field) => "$field = :$field", array_keys($fieldsToUpdate)));
+
+        $fieldsToUpdate['id'] = $id;
+
+        $sql = "UPDATE users SET $setClause WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($fieldsToUpdate);
         
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-        $stmt->execute([$id]);
-        $user = $stmt->fetch();
-
-        if (!$user) {
-            http_response_code(404);
-            echo json_encode(["error" => "User not found"]);
-            exit;
-        }
-
-        $stmtUpdate = $pdo->prepare("
-        UPDATE users SET
-            username = :username,
-            role = :role,
-            bio = :bio,
-            verified = :verified
-        WHERE id = :id
-        ");
-
-        $stmtUpdate->execute([
-            ':username' => $username,
-            ':role' => $role,
-            ':bio' => $bio,
-            ':verified' => intval($verified),
-            ':id' => $id
-        ]);
-
+        $role = $data['role'] ?? 'user';
+        $bio = $data['bio'] ?? '';
+        $verified = $data['verified'] ?? 0;
+        
         $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$id]);
         $user = $stmt->fetch();
 
         echo json_encode([
             'success' => true,
-            'product' => $user,
+            'user' => $user,
         ]);
     } catch (Exception $e) {
         http_response_code(401);

@@ -1,8 +1,17 @@
 <?php
-$servername = "localhost";
-$username = "defcon_user";
-$password = 'Pa$$w0rd';
-$dbname = "defcon_store";
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+echo getenv('DB_HOST');
+
+$servername =  getenv('DB_HOST');
+$username =  getenv('DB_USER');
+$password =  getenv('DB_PASS');
+$dbname =  getenv('DB_NAME');
 
 $dsn = "mysql:host=$servername;dbname=$dbname;charset=utf8mb4";
 

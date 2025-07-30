@@ -1,32 +1,46 @@
-import React, { useState } from 'react';
-import { useParams, useLocation, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { useCart } from './CartContext';
 
 export default function ProductDetails() {
   const { id } = useParams();
-  const location = useLocation();
   const { addToCart } = useCart();
 
-  // Obtener producto desde location.state
-  const product = location.state?.product;
-
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState(0);
 
-  if (!product) {
-    return (
-      <div style={styles.notFound}>
-        Product not found or no product data passed.
-        <p><Link to="/" style={styles.link}>Back to products</Link></p>
-      </div>
-    );
+  useEffect(() => {
+    fetch(`http://127.0.0.1:8000/api/v1/product.php?id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setProduct(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <p style={{ color: '#0f0' }}>Loading...</p>;
+  if (!product) return (
+    <div style={{ color: '#0f0' }}>
+      Product not found. <Link to="/">Go back</Link>
+    </div>
+  );
+
+  let images = [];
+
+  try {
+    images = JSON.parse(product.image_location);
+    if (!Array.isArray(images)) {
+      images = [product.image_location];
+    }
+  } catch {
+    images = [product.image_location];
   }
-
-  // Usamos image_location como única imagen
-  const images = [product.image_location];
-
-  // Parsear reviews JSON, con fallback
+  
   let reviews = [];
+
   try {
     reviews = JSON.parse(product.reviews);
   } catch {

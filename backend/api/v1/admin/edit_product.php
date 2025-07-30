@@ -2,10 +2,13 @@
 require '../../../../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key; 
+use Dotenv\Dotenv;
 
-$secretKey = '';
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../../');
+$dotenv->load();
+$secretKey = getenv('JWT');
 
-header('Access-Control-Allow-Origin: http://localhost:3000');
+header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST, OPTIONS');

@@ -1,5 +1,5 @@
 <?php
-header('Access-Control-Allow-Origin: http://localhost:3000');
+header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -14,8 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require '../../../../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Dotenv\Dotenv;
 
-$secretKey = '';
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../../');
+$dotenv->load();
+$secretKey = getenv('JWT');
 
 include '../../../../db.php';
 
@@ -27,12 +30,6 @@ if (!isset($_COOKIE['token'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $id = $_GET['id'];
-
-    if (!$id) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Missing product ID']);
-        exit;
-    }
 
     try {
         $decoded = JWT::decode($_COOKIE['token'], new Key($secretKey, 'HS512'));
