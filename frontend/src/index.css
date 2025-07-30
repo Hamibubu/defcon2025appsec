@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  background-color: #000;
+  color: #0f0;
+  font-family: monospace;
+}
+
+a {
+  color: #0f0;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+header, footer {
+  background-color: #000;
+}
+
+button {
+  cursor: pointer;
+}
+
+h1, h2, h3 {
+  margin: 0.5rem 0;
+}
+
+
+/* En index.css */
+@keyframes glitch {
+  0% { text-shadow: 2px 2px #0f0; }
+  20% { text-shadow: -2px -2px #f0f; }
+  40% { text-shadow: 2px -2px #0ff; }
+  60% { text-shadow: -2px 2px #ff0; }
+  80% { text-shadow: 2px 2px #f00; }
+  100% { text-shadow: 2px 2px #0f0; }
+}
+.glitch {
+  animation: glitch 1s infinite;
+}
