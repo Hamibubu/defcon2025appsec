@@ -240,37 +240,44 @@ export default function AdminPage() {
       </section>
 
       <section style={styles.section}>
-        <h2 style={styles.subHeader}>Manage Users</h2>
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              <th style={styles.th}>ID</th>
-              <th style={styles.th}>Username</th>
-              <th style={styles.th}>Role</th>
-              <th style={styles.th}>Bio</th>
-              <th style={styles.th}>Verified</th>
-              <th style={styles.th}>Actions</th>
+      <h2 style={styles.subHeader}>Manage Users</h2>
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>ID</th>
+            <th style={styles.th}>Username</th>
+            <th style={styles.th}>Role</th>
+            <th style={styles.th}>Bio</th>
+            <th style={styles.th}>Verified</th>
+            <th style={styles.th}>Address</th>
+            <th style={styles.th}>Phone</th>
+            <th style={styles.th}>Email</th>
+            <th style={styles.th}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((u) => (
+            <tr key={u.id}>
+              <td style={styles.td}>{u.id}</td>
+              <td style={styles.td}>{u.username}</td>
+              <td style={styles.td}>{u.role}</td>
+              <td style={styles.td}>{u.bio}</td>
+              <td style={styles.td}>{u.verified ? 'Yes' : 'No'}</td>
+              <td style={styles.td}>{u.address || '-'}</td>
+              <td style={styles.td}>{u.phone || '-'}</td>
+              <td style={styles.td}>{u.email || '-'}</td>
+              <td style={styles.td}>
+                <div style={styles.actionButtons}>
+                  <button onClick={() => setEditModal({ type: 'user', data: u })} style={styles.editButton}>Edit</button>
+                  <button onClick={() => handleDeleteUser(u.id)} style={styles.deleteButton}>Delete</button>
+                </div>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id}>
-                <td style={styles.td}>{u.id}</td>
-                <td style={styles.td}>{u.username}</td>
-                <td style={styles.td}>{u.role}</td>
-                <td style={styles.td}>{u.bio}</td>
-                <td style={styles.td}>{u.verified}</td>
-                <td style={styles.td}>
-                  <div style={styles.actionButtons}>
-                    <button onClick={() => setEditModal({ type: 'user', data: u })} style={styles.editButton}>Edit</button>
-                    <button onClick={() => handleDeleteUser(u.id)} style={styles.deleteButton}>Delete</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
 
       {editModal.type && (
         <div style={styles.modalOverlay}>
@@ -385,32 +392,40 @@ export default function AdminPage() {
               <form onSubmit={(e) => {
                 e.preventDefault();
                 const form = e.target;
-                console.log(form)
                 const formData = new FormData();
                 formData.append('id', editModal.data.id);
                 formData.append('username', form.username.value);
                 formData.append('role', form.role.value);
                 formData.append('bio', form.bio.value);
                 formData.append('verified', form.verified.value);
-                console.log(formData)         
+                formData.append('address', form.address.value);
+                formData.append('phone', form.phone.value);
+                formData.append('email', form.email.value);
+              
                 fetch('http://127.0.0.1:8000/api/v1/admin/edit_users.php', {
-                   method: 'POST',
-                   credentials: 'include',
-                   body: formData,
-                 })
-                   .then((res) => res.json())
-                   .then((data) => {
-                     setEditModal({ type: null, data: null });
-                     window.location.reload();
-                   });
-               }}>
+                  method: 'POST',
+                  credentials: 'include',
+                  body: formData,
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                  setEditModal({ type: null, data: null });
+                  window.location.reload();
+                });
+              }}>
                 <input name="username" defaultValue={editModal.data.username} style={styles.input} />
                 <input name="role" defaultValue={editModal.data.role} style={styles.input} />
                 <input name="bio" defaultValue={editModal.data.bio} style={styles.input} />
                 <input name="verified" defaultValue={editModal.data.verified} style={styles.input} />
+              
+                {/* Nuevos campos añadidos */}
+                <input name="address" defaultValue={editModal.data.address || ''} placeholder="Address" style={styles.input} />
+                <input name="phone" defaultValue={editModal.data.phone || ''} placeholder="Phone" style={styles.input} />
+                <input name="email" defaultValue={editModal.data.email || ''} placeholder="Email" type="email" style={styles.input} />
+              
                 <button type="submit" style={styles.button}>Save</button>
                 <button onClick={() => setEditModal({ type: null, data: null })} style={styles.deleteButton}>Cancel</button>
-              </form>
+              </form>              
             )}
           </div>
         </div>

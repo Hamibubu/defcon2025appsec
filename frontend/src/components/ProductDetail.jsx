@@ -1,25 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from './CartContext';
+import { useAuth } from './AuthContext'; // <-- importamos auth
 
 export default function ProductDetails() {
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { user, logout } = useAuth();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState(0);
+  const [reviews, setReviews] = useState([]);
+  const [newReview, setNewReview] = useState('');
+  const [sendingReview, setSendingReview] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     fetch(`http://127.0.0.1:8000/api/v1/product.php?id=${id}`)
       .then(res => res.json())
       .then(data => {
-        if (!data.error) setProduct(data);
+        if (!data.error) {
+          setProduct(data);
+          try {
+            let revs = JSON.parse(data.reviews);
+            if (!Array.isArray(revs)) revs = [];
+            revs = revs.filter(r => r && r.id !== null && r.review && r.reviewer && r.uid && r.verified);
+            setReviews(revs);
+          } catch {
+            setReviews([]);
+          }
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [id]);
+  }, [id]);  
 
   if (loading) return <p style={{ color: '#0f0' }}>Loading...</p>;
   if (!product) return (
@@ -29,7 +45,6 @@ export default function ProductDetails() {
   );
 
   let images = [];
-
   try {
     images = JSON.parse(product.image_location);
     if (!Array.isArray(images)) {
@@ -38,18 +53,49 @@ export default function ProductDetails() {
   } catch {
     images = [product.image_location];
   }
-  
-  let reviews = [];
-
-  try {
-    reviews = JSON.parse(product.reviews);
-  } catch {
-    reviews = [];
-  }
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
     alert('Product added to cart.');
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!newReview.trim()) return;
+
+    setSendingReview(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/v1/comment.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          product_id: product.id,
+          review: newReview,
+          user_id: user.id
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setReviews((prev) => [...prev, {
+          id: data.review_id || Date.now(),
+          review: newReview,
+          reviewer: user.username
+        }]);
+        setNewReview('');
+      } else {
+        alert(data.error || 'Failed to add review');
+      }
+    } catch (err) {
+      alert('Error submitting review');
+      console.error(err);
+    } finally {
+      setSendingReview(false);
+    }
   };
 
   return (
@@ -91,8 +137,8 @@ export default function ProductDetails() {
           <ul style={styles.specs}>
             {product.specifications
               ? product.specifications.split(',').map((spec, i) => (
-                  <li key={i}>{spec.trim()}</li>
-                ))
+                <li key={i}>{spec.trim()}</li>
+              ))
               : <li>No specifications available.</li>
             }
           </ul>
@@ -122,13 +168,63 @@ export default function ProductDetails() {
           <h4 style={styles.sectionTitle}>Reviews</h4>
           {reviews.length > 0 ? (
             reviews.map(r => (
-              <div key={r.id} style={styles.review}>
+              <div key={r.id || Math.random()} style={styles.review}>
                 <p style={styles.reviewText}>"{r.review}"</p>
-                <p style={styles.reviewAuthor}>– {r.reviewer}</p>
+                <p style={styles.reviewAuthor}>
+              – <Link to={`/user/${r.uid}`} style={{ color: '#8f8', textDecoration: 'underline' }}>
+                  {r.reviewer}
+                  {r.verified === 1 && <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Twitter_Verified_Badge.svg/1200px-Twitter_Verified_Badge.svg.png" alt="Verified Badge" style={{ width: '20px', height: '20px', marginLeft: '8px', verticalAlign: 'middle' }}/>}
+                </Link>
+            </p>
               </div>
             ))
           ) : (
             <p>No reviews yet.</p>
+          )}
+
+          {user ? (
+            <form onSubmit={handleReviewSubmit} style={{ marginTop: '1rem' }}>
+              <textarea
+                value={newReview}
+                onChange={(e) => setNewReview(e.target.value)}
+                placeholder="Write your review..."
+                rows={3}
+                style={{
+                  width: '100%',
+                  background: '#000',
+                  color: '#0f0',
+                  border: '1px solid #0f0',
+                  borderRadius: '4px',
+                  padding: '0.5rem',
+                  fontFamily: 'monospace',
+                  resize: 'vertical'
+                }}
+                required
+                disabled={sendingReview}
+              />
+              <button
+                type="submit"
+                disabled={sendingReview}
+                style={{
+                  marginTop: '0.5rem',
+                  padding: '0.5rem 1rem',
+                  background: '#0f0',
+                  color: '#000',
+                  fontWeight: 'bold',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: sendingReview ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {sendingReview ? 'Sending...' : 'Submit Review'}
+              </button>
+            </form>
+          ) : (
+            <p style={{ marginTop: '1rem', color: '#aaa' }}>
+              <Link to="/login" style={{ color: '#0f0', textDecoration: 'underline' }}>
+                Log in
+              </Link> to write a review.
+            </p>
           )}
         </div>
 
@@ -149,12 +245,6 @@ const styles = {
     gap: '2rem',
     fontFamily: 'monospace',
     color: '#0f0'
-  },
-  notFound: {
-    textAlign: 'center',
-    marginTop: '4rem',
-    color: '#0f0',
-    fontFamily: 'monospace'
   },
   mainImage: {
     width: '100%',

@@ -9,6 +9,7 @@ use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
 $dotenv->load();
+putenv("JWT=" . $_ENV['JWT']);
 $secretKey = getenv('JWT');
 
 header('Content-Type: application/json');
@@ -33,7 +34,7 @@ $username = trim($data['username']);
 $password = $data['password'];
 
 try {
-    $stmt = $pdo->prepare('SELECT id, username, password, role FROM users WHERE username = ?');
+    $stmt = $pdo->prepare('SELECT id, username, password, role, bio, address, phone, email FROM users WHERE username = ?');
     $stmt->execute([$username]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

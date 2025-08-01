@@ -30,13 +30,16 @@ $username = trim($data['username']);
 $password = $data['password'];
 $role = $data['role'] ?? 'user';
 $bio = $data['description'] ?? '';
+$address = $data['address'] ?? '';
+$phone = $data['phone'] ?? '';
+$email = $data['email'] ?? '';
 $verified = $data['verified'] ?? 0;
 
 $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
 try {
-    $stmt = $pdo->prepare('INSERT INTO users (username, password, role, bio, verified) VALUES (?, ?, ?, ?, ?)');
-    $stmt->execute([$username, $passwordHash, $role, $bio, $verified]);
+    $stmt = $pdo->prepare('INSERT INTO users (username, password, role, bio, address, phone, email, verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt->execute([$username, $passwordHash, $role, $bio, $address, $phone, $email, $verified]);
 
     http_response_code(201);
     echo json_encode(['message' => 'User registered successfully']);

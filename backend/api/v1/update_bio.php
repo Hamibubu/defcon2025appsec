@@ -6,6 +6,7 @@ use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
 $dotenv->load();
+putenv("JWT=" . $_ENV['JWT']);
 $secretKey = getenv('JWT');
 
 header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
@@ -43,7 +44,6 @@ if (!$data) {
     exit;
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $jwt = $_COOKIE['token'];
 
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $decoded = JWT::decode($jwt, new Key($secretKey, 'HS512'));
         $id = $data['id'] ?? null;
 
-        $allowedFields = ['username', 'role', 'bio', 'verified'];
+        $allowedFields = ['username', 'role', 'bio', 'verified', 'address', 'phone', 'email'];
 
         $fieldsToUpdate = array_intersect_key($data, array_flip($allowedFields));
 
@@ -68,11 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql = "UPDATE users SET $setClause WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($fieldsToUpdate);
-        
-        $role = $data['role'] ?? 'user';
-        $bio = $data['bio'] ?? '';
-        $verified = $data['verified'] ?? 0;
-        
+
         $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$id]);
         $user = $stmt->fetch();
@@ -83,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
     } catch (Exception $e) {
         http_response_code(401);
-        echo json_encode(['error' => $e]);
+        echo json_encode(['error' => $e->getMessage()]);
     }
     exit;
 }

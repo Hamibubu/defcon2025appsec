@@ -3,7 +3,6 @@ header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
 header('Content-Type: application/json');
 include '../../../db.php';
 
-// Solo seleccionamos los campos necesarios y limitamos a 6 resultados
 $sql = "SELECT id, name, price, image_location 
         FROM products 
         ORDER BY id DESC 

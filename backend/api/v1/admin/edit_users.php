@@ -6,6 +6,7 @@ use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../../');
 $dotenv->load();
+putenv("JWT=" . $_ENV['JWT']);
 $secretKey = getenv('JWT');
 
 header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
@@ -50,10 +51,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode(["error" => "Invalid username"]);
                 exit;
             }
-            $role = $_POST['role'] ?? 'user';
+
+            $roleInput = $_POST['role'] ?? 'user';
             $bio = $_POST['bio'] ?? '';
-            $verified = $_POST['verified'] ?? 0;
+            $verified = isset($_POST['verified']) ? intval($_POST['verified']) : 0;
+            $address = $_POST['address'] ?? null;
+            $phone = $_POST['phone'] ?? null;
+            $email = $_POST['email'] ?? null;
             
+            // Verificar que el usuario exista
             $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
             $stmt->execute([$id]);
             $user = $stmt->fetch();
@@ -64,38 +70,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
+            // Actualizar usuario con los nuevos campos
             $stmtUpdate = $pdo->prepare("
-            UPDATE users SET
-                username = :username,
-                role = :role,
-                bio = :bio,
-                verified = :verified
-            WHERE id = :id
+                UPDATE users SET
+                    username = :username,
+                    role = :role,
+                    bio = :bio,
+                    verified = :verified,
+                    address = :address,
+                    phone = :phone,
+                    email = :email
+                WHERE id = :id
             ");
 
             $stmtUpdate->execute([
                 ':username' => $username,
-                ':role' => $role,
+                ':role' => $roleInput,
                 ':bio' => $bio,
-                ':verified' => intval($verified),
+                ':verified' => $verified,
+                ':address' => $address,
+                ':phone' => $phone,
+                ':email' => $email,
                 ':id' => $id
             ]);
 
+            // Obtener datos actualizados para devolverlos
             $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
             $stmt->execute([$id]);
             $user = $stmt->fetch();
 
             echo json_encode([
                 'success' => true,
-                'product' => $user,
+                'user' => $user,
             ]);
-        }else{
+        } else {
             http_response_code(401);
             echo json_encode(['error' => 'Unauthorized']);
         }
     } catch (Exception $e) {
         http_response_code(401);
-        echo json_encode(['error' => $e]);
+        echo json_encode(['error' => $e->getMessage()]);
     }
     exit;
 }

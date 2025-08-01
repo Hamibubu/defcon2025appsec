@@ -6,6 +6,7 @@ use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../../');
 $dotenv->load();
+putenv("JWT=" . $_ENV['JWT']);
 $secretKey = getenv('JWT');
 
 header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
@@ -37,24 +38,24 @@ try {
     $decoded = JWT::decode($jwt, new Key($secretKey, 'HS512'));
     $role = $decoded->role;
     if ($role === "administrator"){
-        $sql = "SELECT id, username, role, bio, verified FROM users";
-
+        $sql = "SELECT id, username, role, bio, verified, address, phone, email FROM users";
+    
         try {
-        $stmt = $pdo->query($sql);
-        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        echo json_encode($users);
+            $stmt = $pdo->query($sql);
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            echo json_encode($users);
         } catch (PDOException $e) {
-        http_response_code(500);
-        echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+            http_response_code(500);
+            echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
         }
-
+    
         $pdo = null;
-    }else{
+    } else {
         http_response_code(401);
         echo json_encode(['error' => 'Unauthorized']);
         exit;
-    }
+    }    
 } catch (Exception $e) {
     http_response_code(401);
     echo json_encode(['error' => 'Invalid or expired token']);

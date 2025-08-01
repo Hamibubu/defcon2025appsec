@@ -18,6 +18,7 @@ use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../../');
 $dotenv->load();
+putenv("JWT=" . $_ENV['JWT']);
 $secretKey = getenv('JWT');
 
 include '../../../../db.php';

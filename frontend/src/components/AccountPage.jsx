@@ -1,15 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { Navigate } from 'react-router-dom';
 
 export default function AccountPage() {
   const { user, logout, loading, setUser } = useAuth();
-  const [bio, setBio] = useState(user?.bio || '');
+
+  const [bio, setBio] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+
   const [newPassword2, setNewPassword2] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [updating, setUpdating] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+
+  // Sincroniza los inputs cuando el user cambia
+  useEffect(() => {
+    setBio(user?.bio || '');
+    setAddress(user?.address || '');
+    setPhone(user?.phone || '');
+    setEmail(user?.email || '');
+  }, [user]);
 
   if (loading) return <p>Loading...</p>;
   if (!user) return <Navigate to="/login" replace />;
@@ -25,14 +38,20 @@ export default function AccountPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ id: user.id, bio }),
+        body: JSON.stringify({ 
+          id: user.id, 
+          bio, 
+          address, 
+          phone, 
+          email 
+        }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to update bio');
+      if (!res.ok) throw new Error(data.error || 'Failed to update info');
 
-      setMessage(data.message || 'Bio updated');
-      if (data.user) setUser(data.user);
+      setMessage(data.message || 'Info updated');
+      if (data.user) setUser(data.user); // Actualiza user global
     } catch (err) {
       setError(err.message);
     } finally {
@@ -106,24 +125,58 @@ export default function AccountPage() {
       <h2>Account</h2>
       <p><strong>Username:</strong> {user.username}</p>
       <p><strong>Role:</strong> {user.role || 'user'}</p>
-      <p><strong>Bio:</strong> {user.bio || 'No bio set'}</p>
+      <strong>Bio:</strong>
+      <br />
+      <br />
+      
+      <div dangerouslySetInnerHTML={{ __html: bio }} />
+      <p><strong>Address:</strong> {user.address || 'No address set'}</p>
+      <p><strong>Phone:</strong> {user.phone || 'No phone set'}</p>
+      <p><strong>Email:</strong> {user.email || 'No email set'}</p>
 
       {message && <p style={{ color: 'lightgreen' }}>{message}</p>}
       {error && <p style={{ color: 'tomato' }}>{error}</p>}
 
       <form onSubmit={handleBioUpdate} style={{ marginTop: '2rem' }}>
-        <h3>Update Bio</h3>
+        <h3>Update Info</h3>
         <label>
           Bio:
           <textarea
             value={bio}
             onChange={e => setBio(e.target.value)}
-            rows={4}
+            rows={3}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          Address:
+          <input
+            type="text"
+            value={address}
+            onChange={e => setAddress(e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          Phone:
+          <input
+            type="text"
+            value={phone}
+            onChange={e => setPhone(e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          Email:
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
             style={inputStyle}
           />
         </label>
         <button type="submit" disabled={updating} style={buttonStyle}>
-          {updating ? 'Updating...' : 'Update Bio'}
+          {updating ? 'Updating...' : 'Update Info'}
         </button>
       </form>
 

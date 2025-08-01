@@ -9,6 +9,9 @@ export default function RegisterPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [description, setDescription] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
   const handleRegister = async (e) => {
@@ -19,7 +22,8 @@ export default function RegisterPage() {
     }
 
     try {
-      await register(username.trim(), password.trim(), description);
+      // Envía todos los campos nuevos también
+      await register(username.trim(), password.trim(), description, address.trim(), phone.trim(), email.trim());
       navigate('/login');
     } catch (err) {
       setError(err.message);
@@ -57,6 +61,24 @@ export default function RegisterPage() {
           placeholder="Description"
           value={description}
           onChange={e => setDescription(e.target.value)}
+          style={inputStyle}
+        />
+        <input
+          placeholder="Address"
+          value={address}
+          onChange={e => setAddress(e.target.value)}
+          style={inputStyle}
+        />
+        <input
+          placeholder="Phone"
+          value={phone}
+          onChange={e => setPhone(e.target.value)}
+          style={inputStyle}
+        />
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
           style={inputStyle}
         />
         <button
