@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import config from './config.json';
+import { useAuth } from './AuthContext';
 
 export default function AdminPage() {
+  const { user } = useAuth();
+
   const [name, setName] = useState('');
 
   const [price, setPrice] = useState('');
@@ -28,7 +32,12 @@ export default function AdminPage() {
 
   const [mImages, setImages] = useState([]);
 
+  const [api, setApi] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+
   const fetchProducts = async () => {
+    track("Accessed admin platform", user.id);
     fetch('http://127.0.0.1:8000/api/v1/admin/products.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,6 +60,24 @@ export default function AdminPage() {
       setError(err.message);
     });
   };
+
+  const track = async (action, uid) => {
+    fetch('http://127.0.0.1:8000/api/v1/admin/track.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        track_api: config.apiUrl,
+        action: action,
+        user: uid,
+        time: new Date().toLocaleString()
+      })
+    }).then( dt => {
+      console.log("Success!");
+    }).catch( err => {
+      setError(err.message);
+    });
+  }
 
   const fetchUsers = async () => {
     fetch('http://127.0.0.1:8000/api/v1/admin/users.php', {
@@ -77,6 +104,7 @@ export default function AdminPage() {
     })
     .then(res => {
       if (!res.ok) throw new Error('Internal Server Error');
+      track("Product "+id+" deleted", user.id);
       window.location.reload();
       return res.json();
     })
@@ -92,6 +120,7 @@ export default function AdminPage() {
     })
     .then(res => {
       if (!res.ok) throw new Error('Internal Server Error');
+      track("User "+id+" deleted", user.id);
       window.location.reload();
       return res.json();
     })
@@ -126,6 +155,7 @@ export default function AdminPage() {
       });
   
       if (!res.ok) throw new Error('Error creating the product');
+      track("Product "+name+" added", user.id);
       window.location.reload();
       const data = await res.json();
 
@@ -133,11 +163,14 @@ export default function AdminPage() {
       console.error(err.message);
     }
   };  
-  
+
   useEffect(() => {
-    fetchProducts();
-    fetchUsers();
-  }, []);
+    if (user) {
+      fetchProducts();
+      fetchUsers();
+    }
+  }, [loading, user]);
+
 
   useEffect(() => {
     if (editModal.data?.image_location) {
@@ -319,8 +352,9 @@ export default function AdminPage() {
                  })
                    .then((res) => res.json())
                    .then((data) => {
-                     setEditModal({ type: null, data: null });
-                     window.location.reload();
+                      track("Product "+editModal.data.id+" edited", user.id);
+                      setEditModal({ type: null, data: null });
+                      window.location.reload();
                    });
                }}
              >
@@ -409,6 +443,7 @@ export default function AdminPage() {
                 })
                 .then((res) => res.json())
                 .then((data) => {
+                  track("User "+editModal.data.id+" edited", user.id);
                   setEditModal({ type: null, data: null });
                   window.location.reload();
                 });

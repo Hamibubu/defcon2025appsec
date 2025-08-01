@@ -55,7 +55,7 @@ export default function ProductList() {
     if (maxStock) params.append('maxStock', maxStock);
     params.append('sortPriceAsc', sortPriceAsc ? '1' : '0');
 
-    fetch(`http://127.0.0.1:8000/api/v1/products_search.php?${params.toString()}`)
+    fetch(`http://127.0.0.1:8000/api/v1/products_search.php?index=products&${params.toString()}`)
       .then(res => {
         if (!res.ok) throw new Error('Error fetching filtered products');
         return res.json();
@@ -63,7 +63,7 @@ export default function ProductList() {
       .then(data => {
         setProducts(data);
         setLoading(false);
-        setIsAdvancedSearch(true); // Ya estamos en búsqueda avanzada
+        setIsAdvancedSearch(true);
       })
       .catch(err => {
         setError(err.message);

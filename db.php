@@ -25,6 +25,16 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
     ]);
+    header('X-Hostname: ' . gethostname());
+    header('X-Database-Version: ' . $pdo->query("SELECT VERSION()")->fetchColumn());
+    header('X-OS: ' . php_uname()); 
+    header('X-PHP-Error-Reporting: ' . error_reporting());  
+    header('X-Request-ID: ' . ($_SERVER['HTTP_X_REQUEST_ID'] ?? uniqid()));
+    header('X-Server-Time: ' . date('c'));
+    header('Environment: prod');
+    header('X-Session-Enabled: ' . (session_status() === PHP_SESSION_ACTIVE ? 'Yes' : 'No'));
+    $serverIP = $_SERVER['SERVER_ADDR'] ?? getHostByName(getHostName());
+    header('X-Backend-Server: ' . $serverIP);
 
 } catch (PDOException $e) {
     if (!headers_sent()) {
