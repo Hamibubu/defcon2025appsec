@@ -18,7 +18,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://127.0.0.1:8000/api/v1/product.php?id=${id}`)
+    fetch(`/api/v1/product.php?id=${id}`)
       .then(res => res.json())
       .then(data => {
         if (!data.error) {
@@ -26,7 +26,7 @@ export default function ProductDetails() {
           try {
             let revs = JSON.parse(data.reviews);
             if (!Array.isArray(revs)) revs = [];
-            revs = revs.filter(r => r && r.id !== null && r.review && r.reviewer && r.uid && r.verified);
+            revs = revs.filter(r => r && r.id !== null && r.review && r.reviewer && r.uid && r.verified !== null && r.verified !== undefined);
             setReviews(revs);
           } catch {
             setReviews([]);
@@ -65,7 +65,7 @@ export default function ProductDetails() {
 
     setSendingReview(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/comment.php`, {
+      const res = await fetch(`/api/v1/comment.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

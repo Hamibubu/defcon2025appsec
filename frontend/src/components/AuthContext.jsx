@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/v1/account.php', {
+        const res = await fetch('/api/v1/account.php', {
           credentials: 'include',
         });
 
@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const register = async (username, password, description, address, phone, email) => {
-    const response = await fetch('http://127.0.0.1:8000/api/v1/register.php', {
+    const response = await fetch('/api/v1/register.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password, description, address, phone, email }),
@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
   
 
   const login = async (username, password) => {
-    const res = await fetch('http://127.0.0.1:8000/api/v1/login.php', {
+    const res = await fetch('/api/v1/login.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -69,7 +69,7 @@ export function AuthProvider({ children }) {
   };
 
   const updateProfile = async ({ bio, currentPassword, newPassword }) => {
-    const res = await fetch('http://127.0.0.1:8000/api/v1/update_profile.php', {
+    const res = await fetch('/api/v1/update_profile.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -87,7 +87,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await fetch('http://127.0.0.1:8000/api/v1/logout.php', {
+    await fetch('/api/v1/logout.php', {
       credentials: 'include',
     });
     window.location.href = '/login';

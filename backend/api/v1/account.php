@@ -1,10 +1,10 @@
 <?php
-require '../../../vendor/autoload.php';
+require '../../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
 putenv("JWT=" . $_ENV['JWT']);
 $secretKey = getenv('JWT');
@@ -13,7 +13,7 @@ header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
 header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
 
-include '../../../db.php';
+include '../../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);

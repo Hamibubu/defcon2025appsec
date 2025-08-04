@@ -9,7 +9,7 @@ export default function UserProfile() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://127.0.0.1:8000/api/v1/user.php?id=${uid}`, {
+    fetch(`/api/v1/user.php?id=${uid}`, {
       credentials: 'include',
     })
       .then(res => {

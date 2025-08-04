@@ -38,7 +38,7 @@ export default function AdminPage() {
 
   const fetchProducts = async () => {
     track("Accessed admin platform", user.id);
-    fetch('http://127.0.0.1:8000/api/v1/admin/products.php', {
+    fetch('/api/v1/admin/products.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
@@ -62,7 +62,7 @@ export default function AdminPage() {
   };
 
   const track = async (action, uid) => {
-    fetch('http://127.0.0.1:8000/api/v1/admin/track.php', {
+    fetch('/api/v1/admin/track.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -80,7 +80,7 @@ export default function AdminPage() {
   }
 
   const fetchUsers = async () => {
-    fetch('http://127.0.0.1:8000/api/v1/admin/users.php', {
+    fetch('/api/v1/admin/users.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
@@ -98,7 +98,7 @@ export default function AdminPage() {
   };
 
   const handleDeleteProduct = (id) => {
-    fetch("http://127.0.0.1:8000/api/v1/admin/delete_products.php?id="+String(id), {
+    fetch("/api/v1/admin/delete_products.php?id="+String(id), {
       method: 'DELETE',
       credentials: 'include'
     })
@@ -114,7 +114,7 @@ export default function AdminPage() {
   };
 
   const handleDeleteUser = (id) => {
-    fetch("http://127.0.0.1:8000/api/v1/admin/delete_users.php?id="+String(id), {
+    fetch("/api/v1/admin/delete_users.php?id="+String(id), {
       method: 'DELETE',
       credentials: 'include'
     })
@@ -148,7 +148,7 @@ export default function AdminPage() {
     }
   
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/admin/add_product.php', {
+      const res = await fetch('/api/v1/admin/add_product.php', {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -320,8 +320,9 @@ export default function AdminPage() {
                <form
                onSubmit={(e) => {
                 e.preventDefault();
+                
                 const form = e.target;
-                const original_imgs=products[(editModal.data.id)-1].image_location;
+                const original_imgs = products.find(p => p.id === editModal.data.id)?.image_location || [];
                 const formData = new FormData();
                 formData.append('id', editModal.data.id);
                 formData.append('name', form.name.value);
@@ -345,7 +346,7 @@ export default function AdminPage() {
                   formData.append('deletedImages[]', '');
                 }
                            
-                fetch('http://127.0.0.1:8000/api/v1/admin/edit_product.php', {
+                fetch('/api/v1/admin/edit_product.php', {
                    method: 'POST',
                    credentials: 'include',
                    body: formData,
@@ -436,7 +437,7 @@ export default function AdminPage() {
                 formData.append('phone', form.phone.value);
                 formData.append('email', form.email.value);
               
-                fetch('http://127.0.0.1:8000/api/v1/admin/edit_users.php', {
+                fetch('/api/v1/admin/edit_users.php', {
                   method: 'POST',
                   credentials: 'include',
                   body: formData,

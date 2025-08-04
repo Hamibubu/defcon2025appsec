@@ -1,8 +1,8 @@
 <?php
-require '../../../../vendor/autoload.php';
+require '../../../vendor/autoload.php';
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../../');
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
 $dotenv->load();
 putenv("JWT=" . $_ENV['JWT']);
 $secretKey = getenv('JWT');

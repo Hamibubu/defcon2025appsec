@@ -34,7 +34,7 @@ export default function AccountPage() {
     setUpdating(true);
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/update_bio.php', {
+      const res = await fetch('/api/v1/update_bio.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -66,7 +66,7 @@ export default function AccountPage() {
     setUpdating(true);
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/change_password.php', {
+      const res = await fetch('/api/v1/change_password.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

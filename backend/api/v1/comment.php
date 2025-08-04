@@ -5,17 +5,17 @@ header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require '../../../vendor/autoload.php';
+require '../../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key; 
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
 putenv("JWT=" . $_ENV['JWT']);
 $secretKey = getenv('JWT');
 
-include '../../../db.php';
+include '../../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header('Access-Control-Allow-Methods: POST, OPTIONS');

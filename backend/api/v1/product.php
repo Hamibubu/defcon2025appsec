@@ -1,12 +1,12 @@
 <?php
 header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
 header('Content-Type: application/json');
-include '../../../db.php';
+include '../../db.php';
 
-require '../../../vendor/autoload.php';
+require '../../vendor/autoload.php';
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../../..');
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
 
 putenv("JWT=" . $_ENV['JWT']);

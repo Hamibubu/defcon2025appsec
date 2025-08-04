@@ -23,7 +23,7 @@ export default function ProductList() {
   // Carga inicial de top products
   useEffect(() => {
     setLoading(true);
-    fetch('http://127.0.0.1:8000/api/v1/products_top.php')
+    fetch('/api/v1/products_top.php')
       .then(res => {
         if (!res.ok) throw new Error('Error fetching top products');
         return res.json();
@@ -55,7 +55,7 @@ export default function ProductList() {
     if (maxStock) params.append('maxStock', maxStock);
     params.append('sortPriceAsc', sortPriceAsc ? '1' : '0');
 
-    fetch(`http://127.0.0.1:8000/api/v1/products_search.php?index=products&${params.toString()}`)
+    fetch(`/api/v1/products_search.php?index=products&${params.toString()}`)
       .then(res => {
         if (!res.ok) throw new Error('Error fetching filtered products');
         return res.json();

@@ -1,7 +1,7 @@
 <?php
 header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
 header('Content-Type: application/json');
-include '../../../db.php';
+include '../../db.php';
 
 $sql = "SELECT id, name, price, image_location 
         FROM products 
