@@ -13,7 +13,7 @@ export default function UserProfile() {
       credentials: 'include',
     })
       .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch user');
+        if (!res.ok) throw new Error('Failed to fetch');
         return res.json();
       })
       .then(data => {
