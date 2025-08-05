@@ -54,7 +54,7 @@ services:
 volumes:
   mysql-data:
   frontend-static:
-  images-storage:  # Volumen dedicado para imágenes
+  images-storage: 
 
 networks:
   app-net:
