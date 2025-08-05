@@ -7,16 +7,17 @@ import CartPage from './components/CartPage';
 import ProductDetail from './components/ProductDetail';
 import AccountPage from './components/AccountPage';
 import LoginPage from './components/LoginPage';
-import CartProvider from './components/CartContext';
-import AuthProvider from './components/AuthContext';
+import { CartProvider } from './components/CartContext';
+import { AuthProvider } from './components/AuthContext';
 import RegisterPage from './components/RegisterPage';
+import AdminPage from './components/AdminPage';
 import UserProfile from './components/UserProfile';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
+    <Router> 
+      <AuthProvider>
+        <CartProvider>
           <Header />
           <main className="container">
             <Routes>
@@ -26,12 +27,13 @@ export default function App() {
               <Route path="/account" element={<AccountPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/user/:id" element={<UserProfile />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/user/:uid" element={<UserProfile />} />
             </Routes>
           </main>
           <Footer />
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+        </CartProvider>
+      </AuthProvider>
+    </Router>
   );
 }

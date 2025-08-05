@@ -22,8 +22,13 @@ COPY . .
 
 COPY ../.env .env
 
-RUN composer install
-
-RUN chown -R www-data:www-data /var/www/html
+# Ensure images directory and access.log file exist
+RUN mkdir -p /var/www/html/images && \
+    touch /var/www/html/api/v1/access.log && \
+    composer install && \
+    chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html && \
+    chmod 664 /var/www/html/api/v1/access.log && \
+    chown www-data:www-data /var/www/html/api/v1/access.log
 
 EXPOSE 80

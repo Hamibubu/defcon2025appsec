@@ -165,12 +165,14 @@ export default function AdminPage() {
   };  
 
   useEffect(() => {
-    if (user) {
+    if (user === undefined) return;
+    if (!user) {
+      navigate('/login');
+    } else if (user.role === 'administrator') {
       fetchProducts();
       fetchUsers();
     }
-  }, [loading, user]);
-
+  }, [user, navigate]);
 
   useEffect(() => {
     if (editModal.data?.image_location) {

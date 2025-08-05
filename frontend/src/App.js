@@ -15,9 +15,9 @@ import UserProfile from './components/UserProfile';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
+    <Router> 
+      <AuthProvider>
+        <CartProvider>
           <Header />
           <main className="container">
             <Routes>
@@ -32,8 +32,8 @@ export default function App() {
             </Routes>
           </main>
           <Footer />
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+        </CartProvider>
+      </AuthProvider>
+    </Router>
   );
 }

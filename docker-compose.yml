@@ -20,7 +20,7 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ./backend:/var/www/html
+      - images-storage:/var/www/html/images
     networks:
       - app-net
 
@@ -54,6 +54,7 @@ services:
 volumes:
   mysql-data:
   frontend-static:
+  images-storage:  # Volumen dedicado para imágenes
 
 networks:
   app-net:

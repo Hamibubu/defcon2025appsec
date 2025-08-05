@@ -5,6 +5,10 @@ const path = require('path');
 const app = express();
 const PORT = 1234;
 
+app.get('/api/flag', (req, res) => {
+    res.status(200).json({ success: "flag{AppSecWebReversing2025}" });
+});
+
 app.get('/api/track', (req, res) => {
     console.log("REQ");
     const { action, user, time } = req.query;

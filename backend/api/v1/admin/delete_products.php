@@ -1,5 +1,5 @@
 <?php
-header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
+header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -29,6 +29,18 @@ if (!isset($_COOKIE['token'])) {
     exit;
 }
 
+function deleteImageIfAllowed(string $imgPath): bool {
+    $baseDir = realpath(__DIR__ . '/../../../images');
+    $fullPath = realpath($baseDir . '/' . ltrim($imgPath, '/'));
+
+    if ($fullPath && strpos($fullPath, $baseDir) === 0 && file_exists($fullPath)) {
+        return unlink($fullPath);
+    }
+
+    return false;
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $id = $_GET['id'];
 
@@ -52,8 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 
         $images = json_decode($product['image_location'], true);
         foreach ($images as $img) {
-            $path = __DIR__ . '/../../../frontend/public' . $img;
-            if (file_exists($path)) unlink($path);
+            deleteImageIfAllowed($img);
         }
 
         $stmt = $pdo->prepare("DELETE FROM products WHERE id = ?");

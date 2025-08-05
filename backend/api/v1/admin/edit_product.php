@@ -9,7 +9,7 @@ $dotenv->load();
 putenv("JWT=" . $_ENV['JWT']);
 $secretKey = getenv('JWT');
 
-header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
+header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -35,7 +35,19 @@ if (!isset($_COOKIE['token'])) {
     exit;
 }
 
-$uploadDir = realpath(__DIR__ . '/../../../frontend/public/images');
+$uploadDir = realpath(__DIR__ . '/../../../images');
+
+function deleteImageIfAllowed(string $imgPath): bool {
+    $baseDir = realpath(__DIR__ . '/../../../images');
+    $fullPath = realpath($baseDir . '/' . ltrim($imgPath, '/'));
+
+    if ($fullPath && strpos($fullPath, $baseDir) === 0 && file_exists($fullPath)) {
+        return unlink($fullPath);
+    }
+
+    return false;
+}
+
 
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
@@ -142,10 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $deletedImages = array_filter($deletedImages);
             
             foreach ($deletedImages as $img) {
-                $path = __DIR__ . '/../../../frontend/public' . $img;
-                if (file_exists($path)) {
-                    unlink($path);
-                }
+                deleteImageIfAllowed($img);
             }
 
             $filtered_imgs = [];
