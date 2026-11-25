@@ -29,7 +29,7 @@ Clone the repository and launch the environment:
 git clone https://github.com/Hamibubu/defcon2025appsec.git
 cd defcon2025appsec
 chmod +x dev.sh
-dev.sh
+./dev.sh
 ```
 ---
 
