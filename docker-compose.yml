@@ -1,4 +1,4 @@
-\# Compose de DESARROLLO
+# Compose de DESARROLLO
 # Uso: docker compose -f docker-compose.yml up -d --build
 # Las rutas son relativas al directorio de este archivo.
 
