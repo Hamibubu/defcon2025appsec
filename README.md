@@ -28,7 +28,8 @@ Clone the repository and launch the environment:
 ```bash
 git clone https://github.com/Hamibubu/defcon2025appsec.git
 cd defcon2025appsec
-docker-compose up --build
+chmod +x dev.sh
+dev.sh
 ```
 ---
 
