@@ -135,3 +135,17 @@
 [2025-08-04 00:52:03] Access SUCCESS for ProductID=16, tracking_code=60f02a3db600bde333071d9539599c72, IP=127.0.0.1
 [2025-08-04 00:52:13] Access SUCCESS for ProductID=2, tracking_code=865f60e090d988031c79a52cfe962ea6, IP=127.0.0.1
 [2025-08-04 00:52:13] Access SUCCESS for ProductID=2, tracking_code=865f60e090d988031c79a52cfe962ea6, IP=127.0.0.1
+[2026-11-24 22:54:14] Access SUCCESS for ProductID=20, tracking_code=c3df005dbe52ccf0587912f9299765d4, IP=10.200.2.6
+[2026-11-24 22:54:14] Access SUCCESS for ProductID=20, tracking_code=c3df005dbe52ccf0587912f9299765d4, IP=10.200.2.6
+[2026-11-24 22:54:18] Access SUCCESS for UserID=9, tracking_code=22506c42d267a185ff9095c4fbb38fda, IP=10.200.2.6
+[2026-11-24 22:54:18] Access SUCCESS for UserID=9, tracking_code=22506c42d267a185ff9095c4fbb38fda, IP=10.200.2.6
+[2026-11-24 22:54:20] Access SUCCESS for ProductID=20, tracking_code=c3df005dbe52ccf0587912f9299765d4, IP=10.200.2.6
+[2026-11-24 22:54:20] Access SUCCESS for ProductID=20, tracking_code=c3df005dbe52ccf0587912f9299765d4, IP=10.200.2.6
+[2026-11-24 22:54:22] Access SUCCESS for UserID=10, tracking_code=0744728792ee8e94678a1588c96585d2, IP=10.200.2.6
+[2026-11-24 22:54:22] Access SUCCESS for UserID=10, tracking_code=0744728792ee8e94678a1588c96585d2, IP=10.200.2.6
+[2026-11-24 22:54:24] Access SUCCESS for ProductID=20, tracking_code=c3df005dbe52ccf0587912f9299765d4, IP=10.200.2.6
+[2026-11-24 22:54:24] Access SUCCESS for ProductID=20, tracking_code=c3df005dbe52ccf0587912f9299765d4, IP=10.200.2.6
+[2026-11-24 22:54:26] Access SUCCESS for ProductID=19, tracking_code=44898e7edaa292382898d49fd5ea6961, IP=10.200.2.6
+[2026-11-24 22:54:26] Access SUCCESS for ProductID=19, tracking_code=44898e7edaa292382898d49fd5ea6961, IP=10.200.2.6
+[2026-11-24 22:54:29] Access SUCCESS for UserID=7, tracking_code=ae76047e2b44f92254b6c400dcd5d9c0, IP=10.200.2.6
+[2026-11-24 22:54:29] Access SUCCESS for UserID=7, tracking_code=ae76047e2b44f92254b6c400dcd5d9c0, IP=10.200.2.6

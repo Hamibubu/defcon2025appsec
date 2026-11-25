@@ -34,7 +34,6 @@ export default function AccountPage() {
     setError(null);
     setMessage(null);
     setUpdating(true);
-
     try {
       const res = await fetch('/api/v1/update_bio.php', {
         method: 'POST',
@@ -48,7 +47,7 @@ export default function AccountPage() {
           email 
         }),
       });
-
+      console.log(res)
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to update info');
 

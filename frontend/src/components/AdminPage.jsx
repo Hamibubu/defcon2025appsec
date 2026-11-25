@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import config from './config.json';
+import { buildDiagnosticsUrl } from '../utils/diagnostics';
 import { useAuth } from './AuthContext';
 
 export default function AdminPage() {
@@ -312,7 +313,38 @@ export default function AdminPage() {
         </tbody>
       </table>
     </section>
-
+                <section style={{
+        ...styles.section,
+        border: '1px solid #0f0',
+        borderRadius: '8px',
+        padding: '1rem 1.5rem',
+        background: '#0a0a0a',
+      }}>
+        <h2 style={styles.subHeader}>🛠️ Diagnostics API</h2>
+        <p style={{ lineHeight: 1.6 }}>
+          When a server-side error occurs, admins can open a live diagnostics
+          report (<code>phpinfo()</code>) to inspect the runtime. The link is
+          signed and valid for <strong>5 minutes</strong> from generation.
+        </p>
+        <p style={{ margin: '1rem 0 0.5rem' }}>
+          <strong>Current diagnostics link:</strong>
+        </p>
+        <a
+          href={buildDiagnosticsUrl()}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            color: '#ff0',
+            wordBreak: 'break-all',
+            display: 'inline-block',
+            padding: '0.5rem',
+            border: '1px dashed #0f0',
+            borderRadius: '4px',
+          }}
+        >
+          {buildDiagnosticsUrl()}
+        </a>
+      </section>
 
       {editModal.type && (
         <div style={styles.modalOverlay}>

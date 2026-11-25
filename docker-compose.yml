@@ -1,15 +1,19 @@
-version: '3.8'
+\# Compose de DESARROLLO
+# Uso: docker compose -f docker-compose.yml up -d --build
+# Las rutas son relativas al directorio de este archivo.
 
 services:
   mysql:
     image: mysql:8.0
     container_name: mysql
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
     command: --bind-address=0.0.0.0
+    ports:
+      - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - ./mysql-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - app-net
@@ -20,21 +24,38 @@ services:
     depends_on:
       - mysql
     volumes:
-      - images-storage:/var/www/html/images
+      # Todo el backend compartido (incluye api/, images/, vendor/ y .env)
+      - ./backend:/var/www/html
     networks:
       - app-net
 
   internal-api:
     build: ./internal
     container_name: internal-api
-    expose:
-      - "1234"
+    # nodemon reinicia "npm start" cada vez que cambias un archivo
+    command: sh -c "npm install && npx -y nodemon --legacy-watch --exec 'npm start'"
+    ports:
+      - "1234:1234"
+    volumes:
+      - ./internal:/app
+      - /app/node_modules
     networks:
       - app-net
 
   frontend:
-    build: ./frontend
+    image: node:20
     container_name: frontend
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    environment:
+      - PORT=80                   # nginx sigue apuntando a frontend:80
+      - BROWSER=none
+      - WATCHPACK_POLLING=true    # detectar cambios a través del bind mount
+      - CHOKIDAR_USEPOLLING=true  # lo mismo para versiones viejas de CRA
+      - WDS_SOCKET_PORT=0         # el hot reload usa el puerto del navegador (80)
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     networks:
       - app-net
 
@@ -50,11 +71,6 @@ services:
       - php-backend
     networks:
       - app-net
-
-volumes:
-  mysql-data:
-  frontend-static:
-  images-storage:  # Volumen dedicado para imágenes
 
 networks:
   app-net:

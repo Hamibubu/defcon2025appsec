@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { verifySignedIn } from '../utils/jwt';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -16,13 +17,16 @@ export default function LoginPage() {
       setError('Username and password are required.');
       return;
     }
-    try {
+    try { 
       var data = await login(username.trim(), password.trim());
+      const session = await verifySignedIn();
+      if (!session) {
+        setError('Invalid session signature.');
+        return;
+      }
       alert(data.message);
-      navigate('/account');
-    } catch (err) {
-      setError(err.message);
-    }
+      navigate(session.role === 'admin' ? '/admin' : '/account');
+    } catch (err) {}
   };
   
   return (

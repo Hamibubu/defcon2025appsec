@@ -1,4 +1,4 @@
-FROM php:8.3-apache-bullseye
+FROM php:8.3-apache-bookworm
 
 RUN apt-get update && apt-get install -y \
     unzip \
@@ -20,7 +20,7 @@ WORKDIR /var/www/html
 
 COPY . .
 
-COPY ../.env .env
+COPY .env .env
 
 # Ensure images directory and access.log file exist
 RUN mkdir -p /var/www/html/images && \
